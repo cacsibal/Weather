@@ -1,5 +1,6 @@
 package wpics.weather.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,10 +66,21 @@ class WeatherViewModel(private val api: WeatherAPI) : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // These are the current units the user are using
                 val units = _unitSystem.value.requestValue
 
-                // TODO: Use the WeatherAPI class to retrieve weather information
+                val current = api.getCurrent(lat, lon, apiKey, units)
+                val forecast = api.getForecast(lat, lon, apiKey, units)
+
+                val hasForecast = !forecast.list.isNullOrEmpty()
+                if(hasForecast) {
+                    _lastUpdated.value = getFormattedTime()
+                    _state.value = WeatherUIState.Success(
+                        current = current,
+                        forecast = forecast.list
+                    )
+                } else {
+                    _state.value = WeatherUIState.Error("No forecast data available.")
+                }
             } catch (e: Exception) {
                 // 5. Explicit Error Handling
                 // Logs the error to Logcat and updates the UI state to show the error message.
@@ -79,6 +91,8 @@ class WeatherViewModel(private val api: WeatherAPI) : ViewModel() {
             } finally {
                 // 6. Reset Refreshing State
                 _isRefreshing.value = false
+
+                Log.d("WeatherViewModel.fetchData", _state.value.toString())
             }
         }
     }
@@ -89,8 +103,16 @@ class WeatherViewModel(private val api: WeatherAPI) : ViewModel() {
      * @param system The new [UnitSystem] to apply.
      */
     fun updateUnitSystem(system: UnitSystem) {
-        // TODO: Add logic to handle unit system changes
-        // Note: Your data should be updated to the correct unit system
+        if(_unitSystem.value == system) return
+
+        Log.d("WeatherViewModel.updateUnitSystem", "Unit system changed to $system")
+
+        _unitSystem.value = system
+        val lat = lastLat ?: return
+        val lon = lastLon ?: return
+
+        _isRefreshing.value = true
+        fetchData(lat, lon)
     }
 
     /**

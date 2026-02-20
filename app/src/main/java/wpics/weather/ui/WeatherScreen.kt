@@ -1,5 +1,6 @@
 package wpics.weather.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -67,7 +68,7 @@ fun WeatherScreen(viewModel: WeatherViewModel, onRefresh: () -> Unit) {
                         }
                     }
                     is WeatherUIState.Success -> {
-                        // TODO: Invoke a composable function that contains your UI
+                        Log.d("WeatherScreen", "WeatherState.Success")
                     }
                 }
             }
