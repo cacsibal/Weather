@@ -44,7 +44,7 @@ fun ForecastInformation(forecast: List<ForecastItem>, content: @Composable () ->
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(next24h) { item ->
-                val time = item.dtTxt?.let {
+                val time = item.dtTxt?.let { // convert to match local time zone
                     val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).apply {
                         timeZone = java.util.TimeZone.getTimeZone("UTC")
                     }
@@ -80,6 +80,15 @@ fun ForecastInformation(forecast: List<ForecastItem>, content: @Composable () ->
 
                 DayForecastCard(day, low, high, icon)
             }
+        }
+
+        if (dailyGroups.size < 5) {
+            Text(
+                text = "Only ${dailyGroups.size} days of forecast available",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
 
         content()
