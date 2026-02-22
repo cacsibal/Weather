@@ -20,7 +20,7 @@ import java.util.Calendar
  */
 @Composable
 fun WeatherBackground(iconCode: String, content: @Composable () -> Unit) {
-    val tint = getTint()
+    val tint = getTint(iconCode)
 //    Log.d("WeatherBackground", "Tint: $tint")
 
     val gradient = Brush.verticalGradient(
