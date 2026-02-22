@@ -19,14 +19,32 @@ val eveningRed = Color(0xFFFF6B6B)
 val nightNavy = Color(0xFF1C1C5E)
 val black = Color(0xFF000000)
 
-fun getTint(): Pair<Color, Color> = when(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-    in 6..11 -> Pair(morningOrange, morningBlue)
-    in 12..17 -> Pair(morningBlue, afternoonBlue)
-    in 18..20 -> Pair(eveningRed, eveningPurple)
-    else -> Pair(nightNavy, black)
+fun getTint(iconCode: String = ""): Pair<Color, Color> {
+    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    val isNight = iconCode.endsWith("n")
+
+    // add tint based on weather icon
+    val weatherTint: Pair<Color, Color>? = when {
+        iconCode.startsWith("01") -> null // clear -> no change
+        iconCode.startsWith("02") || iconCode.startsWith("03") -> Pair(Color(0xFF9DB8C9), Color(0xFF6E8FA0)) // few clouds
+        iconCode.startsWith("04") -> Pair(Color(0xFF6E7E85), Color(0xFF4A555A)) // overcast
+        iconCode.startsWith("09") || iconCode.startsWith("10") -> Pair(Color(0xFF4A6FA5), Color(0xFF2C3E6B)) // rain
+        iconCode.startsWith("11") -> Pair(Color(0xFF3D3D5C), Color(0xFF1A1A2E)) // thunderstorm
+        iconCode.startsWith("13") -> Pair(Color(0xFFB0C4DE), Color(0xFF8FA8BF)) // snow
+        iconCode.startsWith("50") -> Pair(Color(0xFF8E9EAB), Color(0xFF6B7A83)) // fog
+        else -> null
+    }
+
+    return weatherTint ?: when {
+        isNight -> Pair(nightNavy, black)
+        hour in 6..11 -> Pair(morningOrange, morningBlue)
+        hour in 12..17 -> Pair(morningBlue, afternoonBlue)
+        hour in 18..20 -> Pair(eveningRed, eveningPurple)
+        else -> Pair(nightNavy, black)
+    }
 }
 
 fun getTextColor(): Color = when(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
     in 6..20 -> Color.Unspecified
-    else     -> Color.White // white for night time
+    else     -> Color.White // white for night time to see text better
 }
