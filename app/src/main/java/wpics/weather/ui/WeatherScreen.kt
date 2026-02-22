@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import wpics.weather.ui.components.*
+import wpics.weather.ui.theme.getTextColor
 import wpics.weather.viewmodels.WeatherUIState
 import wpics.weather.viewmodels.WeatherViewModel
 
@@ -49,32 +50,39 @@ fun WeatherScreen(viewModel: WeatherViewModel, onRefresh: () -> Unit) {
         }
     ) { innerPadding ->
         WeatherBackground(iconCode = icon) {
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = onRefresh,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-                when (val state = uiState) {
-                    is WeatherUIState.Loading -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
+            CompositionLocalProvider(LocalContentColor provides getTextColor()) {
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    when (val state = uiState) {
+                        is WeatherUIState.Loading -> {
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
                         }
-                    }
-                    is WeatherUIState.Error -> {
-                        Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-                            Text(state.msg, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.error)
+                        is WeatherUIState.Error -> {
+                            Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+                                Text(state.msg, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.error)
+                            }
                         }
-                    }
-                    is WeatherUIState.Success -> {
-                        Log.d("WeatherScreen", "WeatherState.Success")
+                        is WeatherUIState.Success -> {
+                            Log.d("WeatherScreen", "WeatherState.Success")
 
-                        val current = state.current
-                        val forecast = state.forecast
+                            val current = state.current
+                            val forecast = state.forecast
 
 //                        Log.d("WeatherScreen", "Current: $current")
 //                        Log.d("WeatherScreen", "Forecast: $forecast")
+
+                            Column {
+                                CurrentWeatherCard(current)
+                                ForecastInformation(forecast)
+                            }
+                        }
                     }
                 }
             }

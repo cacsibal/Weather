@@ -22,23 +22,14 @@ import java.util.Calendar
 fun WeatherBackground(iconCode: String, content: @Composable () -> Unit) {
     val baseBackground = MaterialTheme.colorScheme.background
 
-    // Determine the atmospheric tint based on the icon suffix
-    // TODO: Add your own background colors for the various different weather conditions
     val tint = getTint()
     Log.d("WeatherBackground", "Tint: $tint")
 
     val gradient = Brush.verticalGradient(
-        colors = listOf(tint.copy(alpha = 0.15f), baseBackground)
+        colors = listOf(tint.first.copy(alpha = 0.6f), tint.second)
     )
 
     Box(modifier = Modifier.fillMaxSize().background(gradient)) {
         content()
     }
-}
-
-fun getTint(): Color = when(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-    in 6..11 -> morningBlue
-    in 12..17 -> afternoonBlue
-    in 18..23 -> eveningRed
-    else -> nightNavy
 }

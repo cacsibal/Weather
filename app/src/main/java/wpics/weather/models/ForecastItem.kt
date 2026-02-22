@@ -14,5 +14,6 @@ import com.google.gson.annotations.SerializedName
 data class ForecastItem(
     @SerializedName("dt_txt") val dtTxt: String? = null,
     val main: MainData? = null,
-    val weather: List<WeatherDesc>? = null
+    val weather: List<WeatherDesc>? = null,
+    val rain: Rain? = null
 )
