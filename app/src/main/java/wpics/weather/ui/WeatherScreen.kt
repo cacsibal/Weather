@@ -69,6 +69,12 @@ fun WeatherScreen(viewModel: WeatherViewModel, onRefresh: () -> Unit) {
                     }
                     is WeatherUIState.Success -> {
                         Log.d("WeatherScreen", "WeatherState.Success")
+
+                        val current = state.current
+                        val forecast = state.forecast
+
+//                        Log.d("WeatherScreen", "Current: $current")
+//                        Log.d("WeatherScreen", "Forecast: $forecast")
                     }
                 }
             }

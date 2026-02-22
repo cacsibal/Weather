@@ -1,5 +1,6 @@
 package wpics.weather.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import wpics.weather.ui.theme.*
+import androidx.compose.ui.graphics.Color
+import java.util.Calendar
 
 /**
  * Provides a dynamic vertical gradient background based on the current weather icon.
@@ -21,9 +24,8 @@ fun WeatherBackground(iconCode: String, content: @Composable () -> Unit) {
 
     // Determine the atmospheric tint based on the icon suffix
     // TODO: Add your own background colors for the various different weather conditions
-    val tint = when {
-        else -> baseBackground
-    }
+    val tint = getTint()
+    Log.d("WeatherBackground", "Tint: $tint")
 
     val gradient = Brush.verticalGradient(
         colors = listOf(tint.copy(alpha = 0.15f), baseBackground)
@@ -32,4 +34,11 @@ fun WeatherBackground(iconCode: String, content: @Composable () -> Unit) {
     Box(modifier = Modifier.fillMaxSize().background(gradient)) {
         content()
     }
+}
+
+fun getTint(): Color = when(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
+    in 6..11 -> morningBlue
+    in 12..17 -> afternoonBlue
+    in 18..23 -> eveningRed
+    else -> nightNavy
 }
